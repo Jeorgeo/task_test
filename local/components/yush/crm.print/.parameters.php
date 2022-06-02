@@ -1,46 +1,46 @@
 <?
-use Bitrix\Main\Localization\Loc;
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)die();
 
-if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)die();
-// $arRes = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFields("USER", 0, LANGUAGE_ID);
-// $userProp = array();
-// if (!empty($arRes))
-// {
-// 	foreach ($arRes as $key => $val)
-// 		$userProp[$val["FIELD_NAME"]] = ($val["EDIT_FORM_LABEL"] <> '' ? $val["EDIT_FORM_LABEL"] : $val["FIELD_NAME"]);
-// }
+use Bitrix\Main\Localization\Loc,
+    Bitrix\Main;
 
-$userRoleList = [
-    "Администратор",
-    "Пользователь"
-];
+$rsGroups = CGroup::GetList(($by="c_sort"), ($order="desc"), array());
+
+while($arEntity = $rsGroups->GetNext())
+{
+    $userRoleList[$arEntity['ID']] = $arEntity['NAME'];
+};
 
 $entityList = [
-    "Лид",
-    "Сделка",
-    "Счёт",
-    "Предложение",
+    'LEAD' => 'Лид',
+    'DEAL' => 'Сделка',
+    'INVOICE' => 'Счёт',
+    'QUOTE' => 'Предложение'
 ];
 
-
 $arComponentParameters = array(
-	"PARAMETERS" => array(
-		"SET_TITLE" => array(),
-		"USER_ROLE"=>array(
-			"PARENT" => "ADDITIONAL_SETTINGS",
-			"NAME" => Loc::getMessage("USER_ROLE"),
-			"TYPE" => "LIST",
-			"VALUES" => $userRoleList,
-			"MULTIPLE" => "Y",
-			"DEFAULT" => array(),
+	'PARAMETERS' => array(
+        'ENTITY_COUNT' => array(
+			'PARENT' => 'ADDITIONAL_SETTINGS',
+			'NAME' => GetMessage('CRM_DEAL_COUNT'),
+			'TYPE' => 'STRING',
+			'DEFAULT' => '50'
 		),
-        "CRM_ENTITY"=>array(
-			"PARENT" => "ADDITIONAL_SETTINGS",
-			"NAME" => Loc::getMessage("CRM_ENTITY"),
-			"TYPE" => "LIST",
-			"VALUES" => $entityList,
-			"MULTIPLE" => "Y",
-			"DEFAULT" => array(),
+		'USER_ROLE'=>array(
+			'PARENT' => 'ADDITIONAL_SETTINGS',
+			'NAME' => Loc::getMessage('USER_ROLE'),
+			'TYPE' => 'LIST',
+			'VALUES' => $userRoleList,
+			'MULTIPLE' => 'Y',
+			'DEFAULT' => array(),
+		),
+        'CRM_ENTITY'=>array(
+			'PARENT' => 'ADDITIONAL_SETTINGS',
+			'NAME' => Loc::getMessage('CRM_ENTITY'),
+			'TYPE' => 'LIST',
+			'VALUES' => $entityList,
+			'MULTIPLE' => 'Y',
+			'DEFAULT' => array(),
 		),
 	),
 );
